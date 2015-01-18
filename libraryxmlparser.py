@@ -21,6 +21,11 @@ class ItunesTrack:
         self.name = ''.join(e for e in name if e.isalnum() or e == " ")
         self.artist = ''.join(e for e in artist if e.isalnum() or e == " ")
         self.album = ''.join(e for e in album if e.isalnum() or e == " ")
+
+        self.name = self.name.strip()
+        self.artist = self.artist.strip()
+        self.album = self.album.strip()
+
         self.location = urlparse(location)
         self.location = unquote(self.location.path)
         self.location = self.location[1:]
