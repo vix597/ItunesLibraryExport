@@ -3,6 +3,8 @@ Itunes exported library XML parser
 '''
 
 import xml.etree.ElementTree as ET
+from urllib.parse import urlparse, unquote
+import re
 
 class ItunesTrack:
     def __init__(
@@ -12,10 +14,16 @@ class ItunesTrack:
         album,
         location
     ):
-        self.name = name
-        self.artist = artist
-        self.album = album
-        self.location = location
+        name.replace('&','and')
+        artist.replace('&','and')
+        album.replace('&','and')
+
+        self.name = ''.join(e for e in name if e.isalnum() or e == " ")
+        self.artist = ''.join(e for e in artist if e.isalnum() or e == " ")
+        self.album = ''.join(e for e in album if e.isalnum() or e == " ")
+        self.location = urlparse(location)
+        self.location = unquote(self.location.path)
+        self.location = self.location[1:]
 
     def __str__(self):
         return ''.join((
@@ -27,10 +35,10 @@ class ItunesTrack:
 
     @classmethod
     def from_element(cls,element):
-        name = None
-        artist = None
-        album = None
-        location = None
+        name = "Unknown Name"
+        artist = "Unknown Artist"
+        album = "Unknown Album"
+        location = "Unknown Location"
 
         for i in range(len(element)):
             child = element[i]

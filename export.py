@@ -3,7 +3,6 @@ import argparse
 import sys
 import os
 import shutil
-from urllib.parse import urlparse, unquote
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "Itunes Library export from XML")
@@ -39,9 +38,11 @@ if __name__ == "__main__":
                 if not os.path.exists(cur_path):
                     os.mkdir(cur_path)
 
-                loc = urlparse(track.location)
-                loc = unquote(loc.path)
-                shutil.copy(loc[1:],cur_path)
+                check_path = os.path.join(cur_path,os.path.basename(track.location))
+                if os.path.isfile(check_path):
+                    print("File copied already")
+                else:
+                    shutil.copy(track.location,cur_path)
             except Exception as e:
                 with open("errors.txt",'a') as f:
                     f.write("Exception copying "+track.name+": "+str(e)+"\n")
